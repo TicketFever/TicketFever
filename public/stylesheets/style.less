@@ -1,8 +1,140 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@bgcolor: #ddd;
+@bgwrapper: #fff;
+@header_color: #fff;
+@feverorange: #F29107;
+
+.dropshadow(@color: #888){ 
+	-webkit-box-shadow: 0px 0px 5px @color;
+	-moz-box-shadow: 0px 0px 5px @color;
+	box-shadow: 0px 0px 5px @color; }
+
+.text-stroke(@color: #000) {
+	text-shadow:
+					     -1px -1px 0 @color,  
+					      1px -1px 0 @color,
+					      -1px 1px 0 @color,
+					       1px 1px 0 @color;
 }
 
-a {
-  color: #00B7FF;
+html {
+	body {
+		background: @bgcolor;
+		#alert_msg {
+			position: absolute;
+			z-index: 9999;
+			text-align: center;
+		}
+
+		header {
+			.navbar {
+				color: @feverorange;
+				border-bottom: 3px solid @feverorange;
+				.navbar-inner {
+					.container {
+						position: relative;
+						.brand {
+							position: relative;
+							width: 210px;
+							img {
+								position: absolute;
+								margin-top: -7px;
+							}
+						}
+					}
+				}
+			}
+		}
+		div[role="main"] {
+			margin-top: 30px;
+			.inner-wrapper {
+				background: @bgwrapper;
+				.event-header {
+					height: 300px;
+					background: url(../img/example_banner.jpg) no-repeat;
+					background-position: center bottom;
+					//border-bottom: 1px solid #fff;
+					position: relative;
+										.dropshadow();
+					span {
+						font-size: 1.1em;
+						color: @header_color;
+						margin: 20px;
+						position: absolute;
+						bottom: 0;
+						.text-stroke();
+					}
+					.event-date {
+						right: 0;
+					}
+					.event-name {
+						left: 0;
+					}
+				}
+
+				.event-content {
+					background: @bgwrapper;
+					border-top: 1px solid #888;
+					.dropshadow();
+					padding-top: 20px;
+					div {
+						padding-bottom: 20px;
+					}
+				}
+
+				.event-options {
+					text-align: center;
+				}
+			}
+			
+		}
+		footer {
+			.container {
+				.span8 {
+					text-align: center;
+					img {
+						margin: 20px 0px 40px 0px;
+						margin-left: -41px;
+					}
+				}
+			}
+		}
+	}
+}
+
+.navbar-inverse .nav > li > a {
+	color: #fff;
+	&:hover, &:active {
+		color: @feverorange;
+	}
+	&:visited {
+		color: #fff;
+	}
+}
+
+.navbar-inverse .nav-collapse .nav > li > a, .navbar-inverse .nav-collapse .dropdown-menu a {
+	color: #fff;
+	&:hover, &:active {
+		color: @feverorange;
+	}
+	&:visited {
+		color: #fff;
+	}
+}
+
+.navbar-inverse .divider-vertical {
+	border-left-color: #444444;
+	border-right-color: #666666;
+}
+
+.navbar-inverse .btn-navbar {
+	border-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 979px) {
+.nav-collapse.in.collapse {
+	padding-top: 16px;
+	.nav:first-child {
+		border-top: 3px solid @feverorange;
+	}
+}
 }
