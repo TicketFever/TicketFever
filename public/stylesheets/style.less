@@ -71,6 +71,27 @@ html {
 					}
 				}
 
+				.event-header-input {
+					height: 300px;
+					background: url(/img/upload_placeholder.jpg) no-repeat;
+					background-position: center bottom;
+					//border-bottom: 1px solid #fff;
+					position: relative;
+
+					span {
+						font-size: 1.1em;
+						margin: 20px;
+						position: absolute;
+						bottom: 0;
+					}
+					.event-date-input {
+						right: 0;
+					}
+					.event-name-input {
+						left: 0;
+					}
+				}
+
 				.event-content {
 					background: @bgwrapper;
 					border-top: 1px solid #888;
@@ -84,8 +105,26 @@ html {
 				.event-options {
 					text-align: center;
 				}
+
+				.event-offer {
+					.text-center {
+						text-align: center;
+					}
+					.hours:after, .minutes:after {
+						content: ":";
+					}
+					
+				}
+
+				.event-setup {
+					div {
+						padding-bottom: 0px;
+					}
+					.center-div {
+						text-align: center;
+					}
+				}
 			}
-			
 		}
 		footer {
 			.container {
@@ -100,6 +139,10 @@ html {
 		}
 	}
 }
+
+.price_ticket:after {
+						content: " €";
+					}
 
 .navbar-inverse .nav > li > a {
 	color: #fff;
