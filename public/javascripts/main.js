@@ -146,11 +146,11 @@ const SERVER = "http://localhost:3000";
 				this.message("error", "You have to be logged in to deny an offer.");
 			}
 		},
-		subscribeWaitinglist: function _subscribe_waitinglist () {
+		subscribeWaitinglist: function _subscribe_waitinglist (event_id) {
 			if(ticketfever.user) {
-				$.ajax("/subscribeEvent", {
+				$.ajax("/subscribeEvent/" + event_id, {
 					type: "POST",
-					data: window.ticketFever.user.id,
+					data: { 'fbid': window.ticketFever.user.id },
 					success: function (error, result) {
 						//TODO
 					}
