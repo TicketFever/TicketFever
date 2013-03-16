@@ -1,9 +1,19 @@
 var Prelude = require('prelude-ls');
 
 exports.tables = {'users':'users',
-		  'events':'events'};
+		  'events':'events',
+		  'tickets':'tickets',
+		  'subscriptions':'subscriptions',
+		  'offers':'offers'};
 
-exports.ids = {'events':'event_id'};
+exports.queues = {'tickets':'ticket_queue',
+		  'subscriptions':'subscriptions_queue'};
+
+exports.qScore = {'tickets':'ticketScore','subscriptions':'subscriptionScore'};
+
+exports.ids = {'events':'event_id',
+	       'tickets':'ticket_id',
+	       'subscriptions':'subscription_id'};
 
 exports.resultStatus = {'OBJ_EXISTS':'OBJ_EXISTS',
 			'OBJ_CREATED':'OBJ_CREATED',
@@ -94,3 +104,196 @@ exports.createEvent = Prelude.curry(function(callback,event){
 
     createObjWithId(exports.tables.events,callback,event);
 });
+
+var getObjFromResult = Prelude.curry(function(result){
+
+    if(result && result.result)
+	return result.result;
+    else
+	return null;
+});
+
+var seqCallback = Prelude.curry(function(callback1,callback2,error,result){
+    
+    if(error){
+	callback2(error,result)
+    }else{	
+	callback1(callback2,result);
+    }
+});
+
+var addToQueueCallback = Prelude.curry(function(callback,objectRef,qRef,obj,error,score){
+    
+    if(error){
+	
+    }else{
+	DB.zadd(exports.queues[objectRef]+':'+obj[qRef],score,JSON.stringify(obj),callback(obj,null));
+    }
+});
+	       
+
+var addToQueue = Prelude.curry(function(objectRef,qRef,callback,result){
+
+    var obj = getObjFromResult(result);
+
+    if(obj && result.resultStatus == exports.resultStatus.OBJ_CREATED){
+
+	DB.incr(exports.qScore[objectRef]+':'+obj[qRef],addToQueueCallback(callback,objectRef,qRef,obj));
+    }else{
+	callback(obj,result.resultStatus,null,result);
+    }
+});
+
+var objResultCallback = Prelude.curry(function(cb,obj,code,error,result){
+
+	if(error){
+	    cb(error,createResult(exports.resultStatus.DB_ERROR,null));
+	}else{
+
+	    if(code){
+		cb(null,createResult(code,obj));
+	    }else{
+
+		cb(null,createResult(exports.resultStatus.OBJ_CREATED,obj));
+	    }
+	}
+    });	
+
+exports.createTicket = Prelude.curry(function(callback,ticket){
+
+    createObjWithId(exports.tables.tickets,seqCallback(addToQueue(exports.tables.tickets,exports.ids.events),objResultCallback(callback)),ticket);
+});
+
+exports.subscribe = Prelude.curry(function(callback,subscription){
+    
+    var callback2 = Prelude.curry(function(cb,obj,error,result){
+
+	if(error){
+	    cb(error,createResult(exports.resultStatus.DB_ERROR,null));
+	}else{
+	    cb(null,createResult(exports.resultStatus.OBJ_CREATED,obj));
+	}
+    });
+
+    subscription[exports.ids.subscriptions] = subscription.fbid + ':' + subscription.event_id;
+
+    createObj(exports.tables.subscriptions,seqCallback(addToQueue(exports.tables.subscriptions,exports.ids.events),objResultCallback(callback)),subscription.subscription_id,subscription);
+});
+
+var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
+
+    if(!err){
+
+	var subscribers = res;
+
+	//console.log(subscribers);
+	//console.log(tickets);
+
+	var rmTickets = [];
+	var rmSubs = [];
+	var addOffers = [];
+
+	var exp = Date.now() + 10*1000;//3600*1000;
+
+	for(var i=0;i + 1<subscribers.length && i + 1<tickets.length;i=i+2){
+
+	    var user = evalRes(subscribers[i]);
+	    var ticket = evalRes(tickets[i]);
+
+	    addOffers.push({'user':user,'ticket':ticket,'expires':exp,'t_score':tickets[i+1],'s_score':subscribers[i+1]});
+	    rmTickets.push(tickets[i+1]);
+	    rmSubs.push(subscribers[i+1]);
+	}
+
+	if(addOffers.length>0){
+
+	    for(var i=0;i<rmTickets.length;i++){
+		DB.zremrangebyscore(exports.queues.tickets+':'+eventId,rmTickets[i],rmTickets[i]);
+		DB.zremrangebyscore(exports.queues.subscriptions+':'+eventId,rmSubs[i],rmSubs[i]);
+	    }
+
+	    for(var i=0;i<addOffers.length;i++){
+		DB.hset(exports.tables.offers,addOffers[i].user.fbid+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+	    }
+	}
+    }
+
+    exports.checkFlag = true;
+});
+
+var matchOffers = Prelude.curry(function(eId,err,res){
+
+    if(!err)
+	DB.zrangebyscore(exports.queues.subscriptions+':'+eId,'-inf','+inf',"withscores",offerMaker(eId,res));
+});
+
+//var 
+
+var matchQueues = Prelude.curry(function(err,res){
+
+    if(!err){
+
+	var queues = res;
+	for(var i=0;i<queues.length;i++){
+
+	    var eId = queues[i].substr(queues[i].indexOf(":")+1);
+	    
+	    DB.zrangebyscore(queues[i],"-inf","+inf","withscores",matchOffers(eId));
+	}
+    }
+});
+
+var checkOffers = function(){
+
+    DB.keys(exports.queues.tickets+':*',matchQueues)
+
+}
+
+var deleteExpired = Prelude.curry(function(err,res){
+
+    var cTime = Date.now();
+
+    if(!err){
+	var del = [];
+
+	for(var i=0;i<res.length;i++){
+
+	    var obj = evalRes(res[i]);
+
+	    if(cTime > obj.expires){
+
+		del.push(obj)
+	    }
+	}
+
+	for(var i=0;i<del.length;i++){
+
+	    DB.zadd(exports.queues.tickets+':'+del[i].ticket.event_id,del[i].t_score,JSON.stringify(del[i].ticket));
+	    DB.zadd(exports.queues.subscriptions+':'+del[i].user.event_id,del[i].t_score,JSON.stringify(del[i].user));
+	    DB.hdel(exports.tables.offers,del[i].user.fbid+':'+del[i].ticket.ticket_id);
+	}	
+    }
+});
+
+var expireOffers = function(){
+
+    DB.hvals(exports.tables.offers,deleteExpired);
+}
+
+var doOffers = function(){
+
+    
+    console.log("fdas");
+
+    checkOffers();
+    expireOffers();
+
+
+    setTimeout(doOffers,5000);
+
+}
+
+exports.watchOffers = function(){
+
+    doOffers();
+}
