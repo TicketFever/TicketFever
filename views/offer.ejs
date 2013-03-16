@@ -86,7 +86,7 @@
                 <div class="row">
                     <div class="span8 offset2 inner-wrapper">
                         <div class="row">
-                            <div class="event-header">
+                            <div class="event-header" style="background: url(<%= info.event.picture_path %>);">
                                 <span class="event-name"><%= info.event.name %></span>
                                 <span class="event-date"><%= info.event.date %></span>
                             </div>
@@ -108,7 +108,7 @@
                                     </div>
                                     <div class="span3 deny-option">
                                         <p>You are not happy with the offer? Then pass the offer on in the waiting list and wait for the next offer.</p>
-                                        <a class="btn btn-large btn-danger" href="javascript:void(0);">Deny Offer</a>
+                                        <a class="btn btn-large btn-danger" href="javascript:window.ticketFever.denyOffer();">Deny Offer</a>
                                     </div>
                                 </div>
                                 <div class="row text-center">

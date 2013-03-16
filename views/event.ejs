@@ -86,7 +86,7 @@
                 <div class="row">
                     <div class="span8 offset2 inner-wrapper">
                         <div class="row">
-                            <div class="event-header">
+                            <div class="event-header" style="background: url(<%= info.event.picture_path %>);">
                                 <span class="event-name"><%= info.event.name %></span>
                                 <span class="event-date"><%= info.event.date %></span>
                             </div>
@@ -96,11 +96,11 @@
                                 <div class="row">
                                     <div class="span3 offset1 seller-option">
                                         <p>You have one or more spare tickets for the event? We might find customers for your tickets!</p>
-                                        <a class="btn btn-large btn-warning" href="javascript:window.ticketFever.openSell();">Sell Ticket</a>
+                                        <a class="btn btn-large btn-warning" href="javascript:window.ticketFever.openSell();">Offer a Ticket</a>
                                     </div>
                                     <div class="span3 buyer-option">
-                                        <p>You have one or more spare tickets for the event? We might find customers for your tickets!</p>
-                                        <a class="btn btn-large btn-warning" href="javascript:void(0);">Buy Ticket</a>
+                                        <p>You need a ticket for this event? Simply subscribe to the Waitinglist and we will notify you if we have a ticket for you!</p>
+                                        <a class="btn btn-large btn-warning" href="javascript:window.ticketFever.subscribeWaitinglist();">Subscribe for Tickets</a>
                                     </div>
                                 </div>
                                 <div class="row">

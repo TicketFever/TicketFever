@@ -75,7 +75,7 @@ const SERVER = "http://localhost:3000";
 			info.picture_path = ticketfever._header_img;
 			$.ajax("/createEvent", {data: {event:JSON.stringify(info)}, type: "POST", success: function(error, result){
 				if(!error) {
-					console.log(result);
+					window.location = SERVER+"/"+result.result.event_nickname;
 				}
 			}});
 		},
@@ -134,14 +134,26 @@ const SERVER = "http://localhost:3000";
 		},
 		denyOffer: function _deny_offer () {
 			if(ticketfever.user) {
-				//TODO Deny Offer
+				$.ajax("/denyOffer", {
+					type: "POST",
+					data: window.ticketFever.user.id,
+					success: function (error, result) {
+						//TODO
+					}
+				});
 			} else {
 				this.message("error", "You have to be logged in to deny an offer.");
 			}
 		},
 		subscribeWaitinglist: function _subscribe_waitinglist () {
 			if(ticketfever.user) {
-				//TODO
+				$.ajax("/subscribeEvent", {
+					type: "POST",
+					data: window.ticketFever.user.id,
+					success: function (error, result) {
+						//TODO
+					}
+				});
 			} else {
 				this.message("error", "You have to be logged in to subscribe to offers.");
 			}
