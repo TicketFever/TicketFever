@@ -186,21 +186,21 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 
 	var subscribers = res;
 
-	console.log(subscribers);
-	console.log(tickets);
+	//console.log(subscribers);
+	//console.log(tickets);
 
 	var rmTickets = [];
 	var rmSubs = [];
 	var addOffers = [];
 
-	var exp = Date.now() + 3600*1000;
+	var exp = Date.now() + 10*1000;//3600*1000;
 
 	for(var i=0;i + 1<subscribers.length && i + 1<tickets.length;i=i+2){
 
 	    var user = evalRes(subscribers[i]);
 	    var ticket = evalRes(tickets[i]);
 
-	    addOffers.push(user.fbid+':'+ticket.ticket_id + " " + JSON.stringify({'user':subscribers[i],'ticket':tickets[i],'expires':exp,'t_score':tickets[i+1],'s_score':subscribers[i+1]}));
+	    addOffers.push({'user':user,'ticket':ticket,'expires':exp,'t_score':tickets[i+1],'s_score':subscribers[i+1]});
 	    rmTickets.push(tickets[i+1]);
 	    rmSubs.push(subscribers[i+1]);
 	}
@@ -211,9 +211,14 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 		DB.zremrangebyscore(exports.queues.tickets+':'+eventId,rmTickets[i],rmTickets[i]);
 		DB.zremrangebyscore(exports.queues.subscriptions+':'+eventId,rmSubs[i],rmSubs[i]);
 	    }
-	    DB.hmset(exports.tables.offers,addOffers);
+
+	    for(var i=0;i<addOffers.length;i++){
+		DB.hset(exports.tables.offers,addOffers[i].user.fbid+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+	    }
 	}
     }
+
+    exports.checkFlag = true;
 });
 
 var matchOffers = Prelude.curry(function(eId,err,res){
@@ -238,16 +243,57 @@ var matchQueues = Prelude.curry(function(err,res){
     }
 });
 
-var watchOffers = function(){
+var checkOffers = function(){
 
     DB.keys(exports.queues.tickets+':*',matchQueues)
 
 }
 
+var deleteExpired = Prelude.curry(function(err,res){
+
+    var cTime = Date.now();
+
+    if(!err){
+	var del = [];
+
+	for(var i=0;i<res.length;i++){
+
+	    var obj = evalRes(res[i]);
+
+	    if(cTime > obj.expires){
+
+		del.push(obj)
+	    }
+	}
+
+	for(var i=0;i<del.length;i++){
+
+	    DB.zadd(exports.queues.tickets+':'+del[i].ticket.event_id,del[i].t_score,JSON.stringify(del[i].ticket));
+	    DB.zadd(exports.queues.subscriptions+':'+del[i].user.event_id,del[i].t_score,JSON.stringify(del[i].user));
+	    DB.hdel(exports.tables.offers,del[i].user.fbid+':'+del[i].ticket.ticket_id);
+	}	
+    }
+});
+
+var expireOffers = function(){
+
+    DB.hvals(exports.tables.offers,deleteExpired);
+}
+
+var doOffers = function(){
+
+    
+    console.log("fdas");
+
+    checkOffers();
+    expireOffers();
+
+
+    setTimeout(doOffers,5000);
+
+}
+
 exports.watchOffers = function(){
 
-
-    watchOffers();
-
-    setInterval(exports.watchOffers,5000);
+    doOffers();
 }
