@@ -3,7 +3,7 @@ const SERVER = "http://localhost:3000";
 	var ticketfever = {
 		_header_img: null,
 		_alert: $('#alert_msg'),
-		init: function _init() {
+		init: function _init () {
 			$('#header_file').bind('change', this.handleHeaderUpload);
 			$('#selling_form').ajaxForm();
 			$('#submit_selling_form').bind('click', this.submitSelling);
@@ -87,21 +87,21 @@ const SERVER = "http://localhost:3000";
 				$('#alert_msg').show();
 			}
 		},
-		openSell: function _open_sell() {
+		openSell: function _open_sell () {
 			if(ticketfever.user) {
 				$("#sell_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to sell a ticket.");
 			}
 		},
-		openOffer: function _open_offer() {
+		openOffer: function _open_offer () {
 			if(ticketfever.user) {
 				$("#offer_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to accept an offer.");
 			}
 		},
-		checkFbStatus: function _check_fb_status() {
+		checkFbStatus: function _check_fb_status () {
 			FB.getLoginStatus(function(response) {
 			  if (response.status === 'connected') {
 			    ticketfever.getFbUser();
@@ -112,14 +112,14 @@ const SERVER = "http://localhost:3000";
 			  }
 			 });
 		},
-		login: function _login() {
+		login: function _login () {
 			FB.login(function(rsp) {
               if(rsp.status == "connected") {
               	ticketfever.getFbUser();
               }
             }, {scope:''});
 		},
-		getFbUser: function _get_fb_user() {
+		getFbUser: function _get_fb_user () {
 			FB.api('/me', function(rsp) {
 				ticketfever.user = rsp;
 			  $("#user_name > a").html(rsp.name);
@@ -127,12 +127,26 @@ const SERVER = "http://localhost:3000";
 			  $("#user_name").show();
 			});
 		},
-		submitSelling: function _submit_selling() {
+		submitSelling: function _submit_selling () {
 			$('#selling_form').ajaxSubmit('/createTicket', {
 				success: this._sellCallback
 			});
 		},
-		_sellCallback: function _sell_callback(error, result) {
+		denyOffer: function _deny_offer () {
+			if(ticketfever.user) {
+				//TODO Deny Offer
+			} else {
+				this.message("error", "You have to be logged in to deny an offer.");
+			}
+		},
+		subscribeWaitinglist: function _subscribe_waitinglist () {
+			if(ticketfever.user) {
+				//TODO
+			} else {
+				this.message("error", "You have to be logged in to subscribe to offers.");
+			}
+		},
+		_sellCallback: function _sell_callback (error, result) {
 			if(!error) {
 				$("#sell_modal").modal("hide");
 			}

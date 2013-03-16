@@ -68,12 +68,12 @@
                         <div class="nav-collapse collapse">
                             <ul class="nav pull-left">
                                 <li class="divider-vertical"></li>
-                                <li class="active"><a href="javascript:void(0);">Startup Weekend Enschede</a></li>
+                                <li class="active"><a href="javascript:void(0);"><%= info.event.name %></a></li>
                                 <li class="divider-vertical"></li>
                             </ul>
                             <ul class="nav pull-right">
                                 <li class="divider-vertical"></li>
-                                <li id="user_name" style="display:none;"><a href="javascript:void(0);">User Name</a></li>
+                                <li id="user_name" style="display:none;"><a href="javascript:void(0);"></a></li>
                                 <li id="log_in"><a href="javascript:window.ticketFever.login();"><i class="icon-facebook-sign icon-large"></i> Log-In</a></li>
                                 <li class="divider-vertical"></li>
                             </div>
@@ -87,8 +87,8 @@
                     <div class="span8 offset2 inner-wrapper">
                         <div class="row">
                             <div class="event-header">
-                                <span class="event-name">Startup Weekend Enschede</span>
-                                <span class="event-date">15-17 March 2013</span>
+                                <span class="event-name"><%= info.event.name %></span>
+                                <span class="event-date"><%= info.event.date %></span>
                             </div>
                         </div>
                         <div class="row">
@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="span8"><p>More information about the event on the <a href="javascript:void(0);">Event Website</a></p>
+                                    <div class="span8"><p>More information about the event on the <a href="http://<%= info.event.url %>">Event Website</a></p>
                                     </div>
                                 </div>
                             </div>   
@@ -128,15 +128,15 @@
                   <div class="modal-body">
                     <form id="selling_form">
                         <label>First Name</label>
-                        <input id="name" name="name" type="text" value="John" class="input-xlarge">
+                        <input id="name" name="name" type="text" value="" class="input-xlarge">
                         <label>Last Name</label>
-                        <input id="last-name" name="last_name" type="text" value="Smith" class="input-xlarge">
+                        <input id="last-name" name="last_name" type="text" value="" class="input-xlarge">
                         <label>Email</label>
-                        <input id="e-mail" name="email" type="text" value="jsmith@yourcompany.com" class="input-xlarge">
+                        <input id="e-mail" name="email" type="text" value="" class="input-xlarge">
                         <label>Account No.</label>
-                        <input id="account-no" name="account_no" type="text" value="0000000000" class="input-xlarge">
+                        <input id="account-no" name="account_no" type="text" value="" class="input-xlarge">
                         <label>Bank No.</label>
-                        <input id="bank-no" name="bank_no" type="text" value="000000" class="input-xlarge">
+                        <input id="bank-no" name="bank_no" type="text" value="" class="input-xlarge">
                         <label>Price</label>
                         <input id="price" name="price" type="number">
                         <label>E-Ticket</label>
