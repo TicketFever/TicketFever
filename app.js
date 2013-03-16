@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-var redis = requre('redis');
+var redis = require('redis');
 
 DB = redis.createClient();
 
