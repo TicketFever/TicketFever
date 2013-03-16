@@ -73,7 +73,7 @@ const SERVER = "http://localhost:3000";
 				return;
 			}
 			info.picture_path = ticketfever._header_img;
-			$.ajax("/createEvent", {data: info, type: "POST", success: function(error, result){
+			$.ajax("/createEvent", {data: {event:JSON.stringify(info)}, type: "POST", success: function(error, result){
 				if(!error) {
 					console.log(result);
 				}
