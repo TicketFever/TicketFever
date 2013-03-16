@@ -3,6 +3,12 @@
  * Module dependencies.
  */
 
+var redis = requre('redis');
+
+DB = redis.createClient();
+
+Prelude = require('prelude-ls');
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')

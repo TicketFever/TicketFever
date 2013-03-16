@@ -9,6 +9,7 @@
     "express": "3.0.2",
     "ejs": "*",
     "less-middleware": "*",
-    "redis" : "*"
+    "redis" : "*",
+    "prelude-ls" : "*"
   }
 }
