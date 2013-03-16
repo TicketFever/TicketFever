@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap-responsive.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css"> 
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="/javascripts/vendor/modernizr-2.6.2.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.9.0.min.js"><\/script>')</script>
+    <script src="/javascripts/vendor/bootstrap.min.js"></script>
+    <script src="/javascripts/vendor/jquery.form.js"></script>
+     <script src="/javascripts/plugins.js"></script>
+    <script src="/javascripts/main.js"></script>
+</head>
+<body>
+        <div id="alert_msg" class="alert fade in" style="display: none;">
+        <a href="#" class="close">&times;</a>  
+        <span class="message"></span>
+        </div>
+        <div id="fb-root"></div>
+        <script>
+          //initializing API
+          window.fbAsyncInit = function() {
+            FB.init({appId: '140617016111971', status: true, cookie: true,
+                     xfbml: true});
+            window.ticketFever.checkFbStatus();
+          };
+          (function() {
+            var e = document.createElement('script'); e.async = true;
+            e.src = document.location.protocol +
+              '//connect.facebook.net/en_US/all.js';
+            document.getElementById('fb-root').appendChild(e);
+          }());
+        </script>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+            <![endif]-->
+
+            <!-- Add your site or application content here -->
+            <header>
+             <div class="navbar navbar-inverse navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container">
+
+                        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+
+                        <!-- Be sure to leave the brand out there if you want it shown -->
+                        <a class="brand" href="#"><img src="/img/logo_60px.png" alt="TicketFever"></a>
+
+                        <!-- Everything you want hidden at 940px or less, place within here -->
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-left">
+                                <li class="divider-vertical"></li>
+                                <li class=""><a href="javascript:void(0);">Startup Weekend Enschede</a></li>
+                                <li class="divider-vertical"></li>
+                            </ul>
+                            <ul class="nav pull-right">
+                                <li class="divider-vertical"></li>
+                                <li id="user_name" style="display:none;"><a href="javascript:void(0);">User Name</a></li>
+                                <li id="log_in"><a href="javascript:window.ticketFever.login();"><i class="icon-facebook-sign icon-large"></i> Log-In</a></li>
+                                <li class="divider-vertical"></li>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div role="main" class="container">
+                <div class="row">
+                    <div class="span8 offset2 inner-wrapper">
+                        <div class="row">
+                            <div class="event-header">
+                                <span class="event-name">Startup Weekend Enschede</span>
+                                <span class="event-date">15-17 March 2013</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="event-content event-offer">
+                                <div class="row">
+                                    <div class="span8 offset1">
+                                    <h3>Ticket Offer</h3>
+                                    <div class="row">
+                                        <div class="span2"><b>Price&nbsp;</b><span class="price_ticket">00.00</span></div>
+                                        <div class="span3"></div>
+                                        <div class="span2"><b>Time Left</b>&nbsp;<span class="hours">00</span><span class="minutes">00</span><span class="seconds">00</span></div>
+                                    </div>
+                                    <div class="row text-center">
+                                    <div class="span3 accept-option">
+                                        <p>You are happy with the offer? Get the ticket now before the time runs out and other people benefit from it!</p>
+                                        <a class="btn btn-large btn-success" href="javascript:window.ticketFever.openOffer();">Accept Offer</a>
+                                    </div>
+                                    <div class="span3 deny-option">
+                                        <p>You are not happy with the offer? Then pass the offer on in the waiting list and wait for the next offer.</p>
+                                        <a class="btn btn-large btn-danger" href="javascript:void(0);">Deny Offer</a>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="span6"><p>More information about the event on the <a href="javascript:void(0);">Event Website</a></p>
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>   
+                        </div> 
+                    </div>
+                </div>
+            </div>
+                <footer>
+                    <div class="container">
+                        <div class="span8 offset2">
+                            <img src="/img/logo_100px.png">
+                        </div>
+                    </div>
+                </footer>
+                
+                <div id="offer_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="sellModalLabel" aria-hidden="true">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Accept Offer</h3>
+                  </div>
+                  <div class="modal-body">
+                    <form id="selling_form">
+                        <label>First Name</label>
+                        <input id="name" name="name" type="text" value="John" class="input-xlarge">
+                        <label>Last Name</label>
+                        <input id="last-name" name="last_name" type="text" value="Smith" class="input-xlarge">
+                        <label>Email</label>
+                        <input id="e-mail" name="email" type="text" value="jsmith@yourcompany.com" class="input-xlarge">
+                </form>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="pull-left">Price&nbsp;</b><span class="price_ticket">00.00</span></div>
+                    <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+                    <a id="pay_for_offer" href="#" class="btn btn-primary">Pay via PayPal</a>
+                  </div>
+                </div>
+
+               
+                <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+                <script>
+                var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+                (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+                    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+                    s.parentNode.insertBefore(g,s)}(document,'script'));
+                </script>
+            </body>
+            </html>
