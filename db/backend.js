@@ -86,13 +86,13 @@ exports.createUser = Prelude.curry(function(callback,user){
 
     //Validate user
 
-    createObj(exports.tables.users,callback,user.fbid,user);
+    createObj(exports.tables.users,callback,user.id,user);
 });
 
 
-exports.getUser = Prelude.curry(function(callback,fbid){
+exports.getUser = Prelude.curry(function(callback,id){
 
-    DB.hget(exports.tables.users,fbid,getObjCallback(callback));
+    DB.hget(exports.tables.users,id,getObjCallback(callback));
 });
 
 exports.getEvent = Prelude.curry(function(callback,eventId){
@@ -102,7 +102,7 @@ exports.getEvent = Prelude.curry(function(callback,eventId){
 
 exports.createEvent = Prelude.curry(function(callback,event){
 
-    createObjWithId(exports.tables.events,callback,event);
+    createObj(exports.tables.events,callback,event.event_nickname,event);
 });
 
 var getObjFromResult = Prelude.curry(function(result){
@@ -213,7 +213,7 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 	    }
 
 	    for(var i=0;i<addOffers.length;i++){
-		DB.hset(exports.tables.offers,addOffers[i].user.fbid+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+		DB.hset(exports.tables.offers,addOffers[i].user.id+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
 	    }
 	}
     }
@@ -270,7 +270,7 @@ var deleteExpired = Prelude.curry(function(err,res){
 
 	    DB.zadd(exports.queues.tickets+':'+del[i].ticket.event_id,del[i].t_score,JSON.stringify(del[i].ticket));
 	    DB.zadd(exports.queues.subscriptions+':'+del[i].user.event_id,del[i].t_score,JSON.stringify(del[i].user));
-	    DB.hdel(exports.tables.offers,del[i].user.fbid+':'+del[i].ticket.ticket_id);
+	    DB.hdel(exports.tables.offers,del[i].user.id+':'+del[i].ticket.ticket_id);
 	}	
     }
 });
@@ -297,3 +297,4 @@ exports.watchOffers = function(){
 
     doOffers();
 }
+

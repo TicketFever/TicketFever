@@ -73,10 +73,11 @@ const SERVER = "http://localhost:3000";
 				return;
 			}
 			info.picture_path = ticketfever._header_img;
-			$.ajax("/createEvent", {data: info, type: "POST", success: function(error, result){
-				if(!error) {
-					window.location = SERVER+"/"+result.result.event_nickname;
-				}
+			$.ajax("/createEvent",{data:{event:info}, type: "POST", success: function(result){
+			    
+			    console.log(result);
+			    result = JSON.parse(result);
+			    window.location = SERVER+"/"+result.result.event_nickname;
 			}});
 		},
 		message: function _message (type, msg) {

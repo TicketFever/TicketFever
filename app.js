@@ -13,7 +13,9 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , frontend = require('./db/frontend')
+  , backend = require('./db/backend');
 
 var app = express();
 
@@ -35,7 +37,13 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/user/:fbid', frontend.getUser);
+app.post('/createUser',frontend.createUser);
+app.get('/event/:event_id',frontend.loadEvent);
+app.post('/createEvent',frontend.createEvent);
+app.get('/registerEvent',frontend.createEventPage);
+app.get('/:event_id', frontend.loadEvent);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
