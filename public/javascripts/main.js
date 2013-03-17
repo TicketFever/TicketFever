@@ -4,6 +4,7 @@ const SERVER = "http://localhost:3000";
 		_header_img: null,
 		_alert: $('#alert_msg'),
 		init: function _init () {
+			this.countdown();
 			$('#header_file').bind('change', this.handleHeaderUpload);
 			$('#selling_form').ajaxForm();
 			$('#submit_selling_form').bind('click', this.submitSelling);
@@ -62,7 +63,7 @@ const SERVER = "http://localhost:3000";
 				ticketfever.message("error", "No Max Price");
 				return;
 			}
-			info.max_price = parseInt(info.max_price);
+			info.max_price = parseFloat(info.max_price, 10);
 			info.url = $("#url").val();
 			if(info.url.length == 0) {
 				ticketfever.message("error", "No URL Specified");
@@ -90,13 +91,19 @@ const SERVER = "http://localhost:3000";
 		},
 		openSell: function _open_sell () {
 			if(ticketfever.user) {
+				$("#sell_modal input#name").val(ticketfever.user.name.split(" ")[0]);
+				$("#sell_modal input#last-name").val(ticketfever.user.name.split(" ")[1]);
+				$("#sell_modal input#e-mail").val(ticketfever.email);
 				$("#sell_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to sell a ticket.");
 			}
 		},
 		openOffer: function _open_offer () {
-			if(ticketfever.user) {
+			if(ticketfever.user && !ticketfever._invalid_offer) {
+				$("#offer_modal input#name").val(ticketfever.user.name.split(" ")[0]);
+				$("#offer_modal input#last-name").val(ticketfever.user.name.split(" ")[1]);
+				$("#offer_modal input#e-mail").val(ticketfever.email);
 				$("#offer_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to accept an offer.");
@@ -117,6 +124,14 @@ const SERVER = "http://localhost:3000";
 			FB.login(function(rsp) {
               if(rsp.status == "connected") {
               	ticketfever.getFbUser();
+              	$.ajax("/createUser", {
+              		type: "POST",
+              		data: {user: ticketfever.user},
+              		success: function(rsp) {
+              			rsp = JSON.parse(rsp);
+              			ticketfever.user = rsp.result;
+              		}
+              	});
               }
             }, {scope:'email'});
 		},
@@ -130,7 +145,10 @@ const SERVER = "http://localhost:3000";
 			});
 		},
 		requestMoreUserInfo: function _request_more_user_info () {
-			
+			$.ajax("/user/"+ticketfever.user.id, {success: function(rsp){
+				rsp = JSON.parse(rsp);
+				ticketfever.user = rsp.result;
+			}});
 		},
 		submitSelling: function _submit_selling () {
 			$('#selling_form').ajaxSubmit({
@@ -145,6 +163,7 @@ const SERVER = "http://localhost:3000";
 					success: function (result) {
 						result = JSON.parse(result);
 						//TODO
+						ticketfever.message("Offer Denied!");
 					}
 				});
 			} else {
@@ -153,6 +172,8 @@ const SERVER = "http://localhost:3000";
 		},
 		subscribeWaitinglist: function _subscribe_waitinglist (event_id) {
 			if(ticketfever.user) {
+				var txt = $(".buyer-option a").html();
+				txt = txt == "Waiting for Offer" ? "Subscribe for Tickets" : "Waiting for Offer";
 				$.ajax("/subscribeEvent/" + event_id, {
 					type: "POST",
 					data: window.ticketFever.user.id,
@@ -163,6 +184,41 @@ const SERVER = "http://localhost:3000";
 			} else {
 				this.message("error", "You have to be logged in to subscribe to offers.");
 			}
+		},
+		countdown: function _count_down () {
+			var h = $(".event-offer .hours").html();
+			var m = $(".event-offer .minutes").html();
+			var s = $(".event-offer .seconds").html();
+
+			if (h.length != 0 && m.length != 0 && s.length != 0) {
+				h = parseInt(h, 10);
+				m = parseInt(m, 10);
+				s = parseInt(s, 10);
+
+				this.loop(h, m, s);
+			}
+		},
+		loop: function _loop (h, m, s) {
+			setTimeout(function() {
+					s--;
+					m = s < 0 ? m-1 : m;
+					h = m < 0 ? h-1 : h;
+					h = h < 0 ? 23 : h;
+					m = m < 0 ? 59 : m;
+					s = s < 0 ? 59 : s;
+
+					// if (h == 0 && m == 0 && s == 0) {
+					// 	ticketfever.message("error", "Time is over!");
+					// 	ticketfever._invalid_offer = true;
+					// 	return;
+					// }
+					// 
+					console.log(s);
+					$(".event-offer .hours").html(h < 10 ? "0"+h : h);
+					$(".event-offer .minutes").html(m < 10 ? "0"+m : m);
+					$(".event-offer .seconds").html(s < 10 ? "0"+s : s);
+					ticketfever.loop(h, m, s);
+			}, 1000);
 		},
 		_sellCallback: function _sell_callback (result) {
 		    $("#sell_modal").modal("hide");		
