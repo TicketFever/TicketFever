@@ -41,6 +41,13 @@ exports.createEvent = Prelude.curry(function(req,resp){
    backend.createEvent(createObjectCallback(resp),req.param('event')); 
 });
 
+exports.subscribeEvent = Prelude.curry(function(req,resp){
+
+   var event_id = req.params.event_id;
+   var fbid = req.param('fbid');
+   backend.subscribe(createObjectCallback(resp),{'event_id': event_id, 'fbid': fbid});
+});
+
 exports.createUser = Prelude.curry(function(req,resp){
 
     backend.createUser(createObjectCallback(resp),req.param('user'));

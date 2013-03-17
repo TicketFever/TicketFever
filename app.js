@@ -43,6 +43,7 @@ app.get('/user/:fbid', frontend.getUser);
 app.post('/createUser',frontend.createUser);
 app.get('/event/:event_id',frontend.loadEvent);
 app.post('/createEvent',frontend.createEvent);
+app.post('/subscribeEvent/:event_id',frontend.subscribeEvent);
 app.get('/registerEvent',frontend.createEventPage);
 app.post('/createTicket',frontend.createTicket);
 
