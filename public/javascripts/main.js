@@ -72,7 +72,9 @@ const SERVER = "http://localhost:3000";
 				ticketfever.message("error", "No Image Uploaded. Click On The Picture To Upload");
 				return;
 			}
+		        info.e_mail = $('#e-mail').val();
 			info.picture_path = ticketfever._header_img;
+		        info.event_id = $('#eventId').val();
 			$.ajax("/createEvent",{data:{event:info}, type: "POST", success: function(result){
 			    
 			    console.log(result);
