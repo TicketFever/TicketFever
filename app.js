@@ -47,6 +47,7 @@ app.get('/subscribeEvent/:event_id/:fbid',frontend.subscribeEvent);
 app.get('/registerEvent',frontend.createEventPage);
 app.post('/createTicket',frontend.createTicket);
 app.get('/offer/:fbid/:ticket_id',frontend.loadOffer);
+app.get('/downloads/:ticket_id',frontend.downloadTicket);
 
 app.get('/:event_id', frontend.loadEvent);
 

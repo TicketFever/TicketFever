@@ -1,5 +1,5 @@
 backend = require('./backend');
-
+var fs = require('fs');
 
 var serveEvent = Prelude.curry(function(resp,err,res){
 
@@ -128,4 +128,19 @@ exports.loadOffer = Prelude.curry(function(req,resp){
     var offer_id = req.params.fbid + ':' + req.params.ticket_id;
 
     backend.getOffer(loadOfferCallback(resp),offer_id);
+});
+
+exports.downloadTicket = Prelude.curry(function(req,resp){
+    
+    try{
+	var file = fs.createReadStream('public/pdfs/'+req.params.ticket_id);
+	resp.writeHead(200,'application/pdf');
+	resp.status(200);
+	file.pipe(resp)
+    }catch(e){
+
+	console.log(e);
+	resp.status(404);
+	resp.end();
+    }
 });
