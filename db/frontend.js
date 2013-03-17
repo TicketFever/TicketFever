@@ -38,7 +38,14 @@ var createObjectCallback = Prelude.curry(function(resp,err,res){
 
 exports.createEvent = Prelude.curry(function(req,resp){
 
-   backend.createEvent(createEventCallback(resp),req.param('event')); 
+   backend.createEvent(createObjectCallback(resp),req.param('event')); 
+});
+
+exports.subscribeEvent = Prelude.curry(function(req,resp){
+
+   var event_id = req.params.event_id;
+   var fbid = req.param('fbid');
+   backend.subscribe(createObjectCallback(resp),{'event_id': event_id, 'fbid': fbid});
 });
 
 exports.createUser = Prelude.curry(function(req,resp){
@@ -60,4 +67,15 @@ exports.getUser = Prelude.curry(function(req,resp){
     backend.getUser(getObjectCallback(resp),fbid);
 });
 
+exports.createTicket = Prelude.curry(function(req,resp){
+
+    var ticket = {'name':req.param('name'),
+		  'last_name':req.param('last_name'),
+		  'e_mail':req.param('e_mail'),
+		  'account_no':req.param('account_no'),
+		  'bank_no':req.param('bank_no'),
+		  'price':req.param('price')};
+
+    console.log(req.param('eticket'));
+});
 
