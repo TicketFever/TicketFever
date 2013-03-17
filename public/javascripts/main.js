@@ -126,7 +126,11 @@ const SERVER = "http://localhost:3000";
 			  $("#user_name > a").html(rsp.name);
 			  $("#log_in").hide();
 			  $("#user_name").show();
+			  	ticketfever.requestMoreUserInfo();
 			});
+		},
+		requestMoreUserInfo: function _request_more_user_info () {
+			
 		},
 		submitSelling: function _submit_selling () {
 			$('#selling_form').ajaxSubmit('/createTicket', {
@@ -138,7 +142,8 @@ const SERVER = "http://localhost:3000";
 				$.ajax("/denyOffer", {
 					type: "POST",
 					data: window.ticketFever.user.id,
-					success: function (error, result) {
+					success: function (result) {
+						result = JSON.parse(result);
 						//TODO
 					}
 				});
@@ -151,7 +156,8 @@ const SERVER = "http://localhost:3000";
 				$.ajax("/subscribeEvent", {
 					type: "POST",
 					data: window.ticketFever.user.id,
-					success: function (error, result) {
+					success: function (result) {
+						result = JSON.parse(result);
 						//TODO
 					}
 				});
