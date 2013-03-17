@@ -1,4 +1,15 @@
 var Prelude = require('prelude-ls');
+var nodemailer = require('nodemailer');
+
+exports.smtpTransport = nodemailer.createTransport("SMTP",{
+    service: "Gmail",
+    auth: {
+        user: "ticketfever2013@gmail.com",
+        pass: "ticketfever1320"
+    }
+});
+
+exports.pdfs = 'public/pdfs/';
 
 exports.tables = {'users':'users',
 		  'events':'events',
@@ -159,9 +170,18 @@ var objResultCallback = Prelude.curry(function(cb,obj,code,error,result){
 	}
     });	
 
-exports.createTicket = Prelude.curry(function(callback,ticket){
+exports.createTicket = Prelude.curry(function(callback,file,ticket){
 
-    createObjWithId(exports.tables.tickets,seqCallback(addToQueue(exports.tables.tickets,exports.ids.events),objResultCallback(callback)),ticket);
+    var fun = Prelude.curry(function(callback,file,error,result){
+	
+	if(!error){
+	    fs.createReadStream(file.path).pipe(fs.createWriteStream(exports.pdfs + result.result.ticket_id));
+	    callback(error,result);
+	}else
+	    callback(error,result);
+    });
+
+    createObjWithId(exports.tables.tickets,seqCallback(addToQueue(exports.tables.tickets,exports.ids.events),objResultCallback(fun(callback,file))),ticket);
 });
 
 exports.subscribe = Prelude.curry(function(callback,subscription){
@@ -175,7 +195,7 @@ exports.subscribe = Prelude.curry(function(callback,subscription){
 	}
     });
 
-    subscription[exports.ids.subscriptions] = subscription.fbid + ':' + subscription.event_id;
+    subscription[exports.ids.subscriptions] = subscription.fbid + ':' + subscription.event_id;    
 
     createObj(exports.tables.subscriptions,seqCallback(addToQueue(exports.tables.subscriptions,exports.ids.events),objResultCallback(callback)),subscription.subscription_id,subscription);
 });
@@ -205,7 +225,7 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 	    rmSubs.push(subscribers[i+1]);
 	}
 
-	if(addOffers.length>0){
+	if(addOffers.length>0){	    
 
 	    for(var i=0;i<rmTickets.length;i++){
 		DB.zremrangebyscore(exports.queues.tickets+':'+eventId,rmTickets[i],rmTickets[i]);
@@ -214,6 +234,25 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 
 	    for(var i=0;i<addOffers.length;i++){
 		DB.hset(exports.tables.offers,addOffers[i].user.id+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+
+		// var mailOptions = {
+		//     from: "TicketFever <ticketfever@gmail.com>", // sender address
+		//     to: "neto@netowork.me" //addOffers[i].user.email, // list of receivers
+		//     subject: "Hello ", // Subject line
+		//     text: "Hello world ", // plaintext body
+		//     html: "<b>Hello world </b>" // html body
+		// }
+
+		// // send mail with defined transport object
+		// exports.smtpTransport.sendMail(mailOptions, function(error, response){
+		//     if(error){
+		// 	console.log(error);
+		//     }else{
+		// 	console.log("Message sent: " + response.message);
+		//     }
+		//     // if you don't want to use this transport object anymore, uncomment following line
+		//     //smtpTransport.close(); // shut down the connection pool, no more messages
+		// });
 	    }
 	}
     }
@@ -296,5 +335,22 @@ var doOffers = function(){
 exports.watchOffers = function(){
 
     doOffers();
+
+    var mailOptions = {
+	from: "TicketFever <ticketfever@gmail.com>", // sender address
+	to: "neto@netowork.me", 
+	subject: "Hello ", // Subject line
+	text: "Hello world ", // plaintext body
+	html: "<b>Hello world </b>" // html body
+    };
+
+    // send mail with defined transport object
+    exports.smtpTransport.sendMail(mailOptions, function(error, response){
+	if(error){
+	    console.log(error);
+	}else{
+	    console.log("Message sent: " + response.message);
+	}
+    });
 }
 

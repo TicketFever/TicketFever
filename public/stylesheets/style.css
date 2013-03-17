@@ -50,6 +50,24 @@ html body div[role="main"] .inner-wrapper .event-header .event-date {
 html body div[role="main"] .inner-wrapper .event-header .event-name {
   left: 0;
 }
+html body div[role="main"] .inner-wrapper .event-header-input {
+  height: 300px;
+  background: url(/img/upload_placeholder.jpg) no-repeat;
+  background-position: center bottom;
+  position: relative;
+}
+html body div[role="main"] .inner-wrapper .event-header-input span {
+  font-size: 1.1em;
+  margin: 20px;
+  position: absolute;
+  bottom: 0;
+}
+html body div[role="main"] .inner-wrapper .event-header-input .event-date-input {
+  right: 0;
+}
+html body div[role="main"] .inner-wrapper .event-header-input .event-name-input {
+  left: 0;
+}
 html body div[role="main"] .inner-wrapper .event-content {
   background: #ffffff;
   border-top: 1px solid #888;
@@ -64,12 +82,28 @@ html body div[role="main"] .inner-wrapper .event-content div {
 html body div[role="main"] .inner-wrapper .event-options {
   text-align: center;
 }
+html body div[role="main"] .inner-wrapper .event-offer .text-center {
+  text-align: center;
+}
+html body div[role="main"] .inner-wrapper .event-offer .hours:after,
+html body div[role="main"] .inner-wrapper .event-offer .minutes:after {
+  content: ":";
+}
+html body div[role="main"] .inner-wrapper .event-setup div {
+  padding-bottom: 0px;
+}
+html body div[role="main"] .inner-wrapper .event-setup .center-div {
+  text-align: center;
+}
 html body footer .container .span8 {
   text-align: center;
 }
 html body footer .container .span8 img {
   margin: 20px 0px 40px 0px;
   margin-left: -41px;
+}
+.price_ticket:after {
+  content: " €";
 }
 .navbar-inverse .nav > li > a {
   color: #fff;

@@ -9,6 +9,8 @@ DB = redis.createClient();
 
 Prelude = require('prelude-ls');
 
+email = require('emailjs');
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
@@ -42,8 +44,11 @@ app.post('/createUser',frontend.createUser);
 app.get('/event/:event_id',frontend.loadEvent);
 app.post('/createEvent',frontend.createEvent);
 app.get('/registerEvent',frontend.createEventPage);
+app.post('/createTicket',frontend.createTicket);
+
 app.get('/:event_id', frontend.loadEvent);
 
+backend.watchOffers();
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -10,6 +10,7 @@
     "ejs": "*",
     "less-middleware": "*",
     "redis" : "*",
-    "prelude-ls" : "*"
+    "prelude-ls" : "*",
+    "nodemailer":"*"
   }
 }

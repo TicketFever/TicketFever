@@ -69,6 +69,11 @@ exports.createTicket = Prelude.curry(function(req,resp){
 		  'bank_no':req.param('bank_no'),
 		  'price':req.param('price')};
 
-    console.log(req.param('eticket'));
+
+    var file = req.files;
+
+    console.log(req);
+
+    backend.createTicket(createObjectCallback(resp),file.eticket,ticket);
 });
 

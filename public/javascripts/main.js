@@ -118,7 +118,7 @@ const SERVER = "http://localhost:3000";
               if(rsp.status == "connected") {
               	ticketfever.getFbUser();
               }
-            }, {scope:''});
+            }, {scope:'email'});
 		},
 		getFbUser: function _get_fb_user () {
 			FB.api('/me', function(rsp) {
@@ -129,8 +129,8 @@ const SERVER = "http://localhost:3000";
 			});
 		},
 		submitSelling: function _submit_selling () {
-			$('#selling_form').ajaxSubmit('/createTicket', {
-				success: this._sellCallback
+			$('#selling_form').ajaxSubmit({
+				success: function(arg){ticketfever._sellCallback(arg);}
 			});
 		},
 		denyOffer: function _deny_offer () {
@@ -159,10 +159,8 @@ const SERVER = "http://localhost:3000";
 				this.message("error", "You have to be logged in to subscribe to offers.");
 			}
 		},
-		_sellCallback: function _sell_callback (error, result) {
-			if(!error) {
-				$("#sell_modal").modal("hide");
-			}
+		_sellCallback: function _sell_callback (result) {
+		    $("#sell_modal").modal("hide");		
 		}
 	}
 
