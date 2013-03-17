@@ -160,15 +160,19 @@ const SERVER = "http://localhost:3000";
 		},
 		denyOffer: function _deny_offer () {
 			if(ticketfever.user) {
-				$.ajax("/denyOffer", {
-					type: "POST",
-					data: window.ticketFever.user.id,
-					success: function (result) {
-						result = JSON.parse(result);
-						//TODO
-						ticketfever.message("Offer Denied!");
-					}
-				});
+				//TODO if we would have more time this should be implemented
+				// $.ajax("/denyOffer", {
+				// 	type: "POST",
+				// 	data: window.ticketFever.user.id,
+				// 	success: function (result) {
+				// 		result = JSON.parse(result);
+				// 		//TODO
+				// 		ticketfever.message("Offer Denied!");
+				// 	}
+				// });
+				$("#accept_offer_btn").addClass("disabled");
+				$("#deny_offer_btn").addClass("disabled");
+				ticketfever.message("info", "Offer Denied");
 			} else {
 				this.message("error", "You have to be logged in to deny an offer.");
 			}
@@ -176,7 +180,9 @@ const SERVER = "http://localhost:3000";
 		subscribeWaitinglist: function _subscribe_waitinglist (event_id) {
 			if(ticketfever.user) {
 				var txt = $(".buyer-option a").html();
-				txt = txt == "Waiting for Offer" ? "Subscribe for Tickets" : "Waiting for Offer";
+				console.log(txt);
+				txt = (txt == "Waiting for Offer") ? "Subscribe for Tickets" : "Waiting for Offer";
+				$(".buyer-option a").html(txt);
 				$.ajax("/subscribeEvent/" + event_id + '/' + window.ticketFever.user.id, {
 					type: "GET",
 					data: window.ticketFever.user.id,

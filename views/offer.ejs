@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>TicketFever.co</title>
+    <title>Ticket-Fever.com</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -104,11 +104,11 @@
                                     <div class="row text-center">
                                     <div class="span3 accept-option">
                                         <p>You are happy with the offer? Get the ticket now before the time runs out and other people benefit from it!</p>
-                                        <a class="btn btn-large btn-success" href="javascript:window.ticketFever.openOffer();">Accept Offer</a>
+                                        <a id="accept_offer_btn" class="btn btn-large btn-success" href="javascript:window.ticketFever.openOffer();">Accept Offer</a>
                                     </div>
                                     <div class="span3 deny-option">
                                         <p>You are not happy with the offer? Then pass the offer on in the waiting list and wait for the next offer.</p>
-                                        <a class="btn btn-large btn-danger" href="javascript:window.ticketFever.denyOffer();">Deny Offer</a>
+                                        <a id="deny_offer_btn" class="btn btn-large btn-danger" href="javascript:window.ticketFever.denyOffer();">Deny Offer</a>
                                     </div>
                                 </div>
                                 <div class="row text-center">
@@ -148,7 +148,7 @@
                   <div class="modal-footer">
                     <div class="pull-left">Price&nbsp;</b><span class="price_ticket"><%= info.ticket.price %></span></div>
                     <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
-                    <a id="pay_for_offer" href="#" class="btn btn-primary">Pay via PayPal</a>
+                    <a id="pay_for_offer" href="/downloads/<%= info.ticket.ticket_id %>" class="btn btn-primary">Pay via PayPal</a>
                   </div>
                 </div>
 
