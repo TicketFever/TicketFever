@@ -138,9 +138,10 @@
                         <label>Bank No.</label>
                         <input id="bank-no" name="bank_no" type="text" value="" class="input-xlarge">
                         <label>Price</label>
-                        <input id="price" name="price" type="number">
+                        <input id="price" name="price" type="number">			
                         <label>E-Ticket</label>
                         <input name="eticket" type="file">
+			<input type="hidden" value="<%= info.event.event_id %>" name="event_id" id="eventId"/>
                 </form>
                   </div>
                   <div class="modal-footer">

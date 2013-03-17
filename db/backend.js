@@ -1,5 +1,6 @@
 var Prelude = require('prelude-ls');
 var nodemailer = require('nodemailer');
+var fs = require('fs');
 
 exports.smtpTransport = nodemailer.createTransport("SMTP",{
     service: "Gmail",
@@ -113,7 +114,14 @@ exports.getEvent = Prelude.curry(function(callback,eventId){
 
 exports.createEvent = Prelude.curry(function(callback,event){
 
+    event.event_id = event.event_nickname;
+
     createObj(exports.tables.events,callback,event.event_nickname,event);
+});
+
+exports.getOffer = Prelude.curry(function(callback,offerId){
+
+    DB.hget(exports.tables.offers,offerId,getObjCallback(callback));
 });
 
 var getObjFromResult = Prelude.curry(function(result){
@@ -146,6 +154,7 @@ var addToQueueCallback = Prelude.curry(function(callback,objectRef,qRef,obj,erro
 var addToQueue = Prelude.curry(function(objectRef,qRef,callback,result){
 
     var obj = getObjFromResult(result);
+    console.log(obj);
 
     if(obj && result.resultStatus == exports.resultStatus.OBJ_CREATED){
 
@@ -171,6 +180,8 @@ var objResultCallback = Prelude.curry(function(cb,obj,code,error,result){
     });	
 
 exports.createTicket = Prelude.curry(function(callback,file,ticket){
+
+    console.log(ticket);
 
     var fun = Prelude.curry(function(callback,file,error,result){
 	
@@ -213,7 +224,7 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 	var rmSubs = [];
 	var addOffers = [];
 
-	var exp = Date.now() + 10*1000;//3600*1000;
+	var exp = Date.now() + 3600*1000;
 
 	for(var i=0;i + 1<subscribers.length && i + 1<tickets.length;i=i+2){
 
@@ -235,24 +246,24 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 	    for(var i=0;i<addOffers.length;i++){
 		DB.hset(exports.tables.offers,addOffers[i].user.id+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
 
-		// var mailOptions = {
-		//     from: "TicketFever <ticketfever@gmail.com>", // sender address
-		//     to: "neto@netowork.me" //addOffers[i].user.email, // list of receivers
-		//     subject: "Hello ", // Subject line
-		//     text: "Hello world ", // plaintext body
-		//     html: "<b>Hello world </b>" // html body
-		// }
+		var mailOptions = {
+		    from: "TicketFever <ticketfever@gmail.com>", // sender address
+		    to: addOffers[i].user.email, // list of receivers
+		    subject: "Ticket for you", // Subject line
+		    text: "There is a ticket for you. ", // plaintext body
+		    html: "<b>There is a ticket available for you. </b>" // html body
+		}
 
-		// // send mail with defined transport object
-		// exports.smtpTransport.sendMail(mailOptions, function(error, response){
-		//     if(error){
-		// 	console.log(error);
-		//     }else{
-		// 	console.log("Message sent: " + response.message);
-		//     }
-		//     // if you don't want to use this transport object anymore, uncomment following line
-		//     //smtpTransport.close(); // shut down the connection pool, no more messages
-		// });
+		// send mail with defined transport object
+		exports.smtpTransport.sendMail(mailOptions, function(error, response){
+		    if(error){
+			console.log(error);
+		    }else{
+			console.log("Message sent: " + response.message);
+		    }
+		    // if you don't want to use this transport object anymore, uncomment following line
+		    //smtpTransport.close(); // shut down the connection pool, no more messages
+		});
 	    }
 	}
     }
@@ -335,22 +346,5 @@ var doOffers = function(){
 exports.watchOffers = function(){
 
     doOffers();
-
-    var mailOptions = {
-	from: "TicketFever <ticketfever@gmail.com>", // sender address
-	to: "neto@netowork.me", 
-	subject: "Hello ", // Subject line
-	text: "Hello world ", // plaintext body
-	html: "<b>Hello world </b>" // html body
-    };
-
-    // send mail with defined transport object
-    exports.smtpTransport.sendMail(mailOptions, function(error, response){
-	if(error){
-	    console.log(error);
-	}else{
-	    console.log("Message sent: " + response.message);
-	}
-    });
 }
 

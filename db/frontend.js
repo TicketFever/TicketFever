@@ -7,8 +7,7 @@ var serveEvent = Prelude.curry(function(resp,err,res){
 
     info.info = {};
     info.info.event = res.result;
-    console.log(res.resultCode);
-    console.log(err);
+    console.log(info);
 
     resp.render('event',info);
 
@@ -74,13 +73,57 @@ exports.createTicket = Prelude.curry(function(req,resp){
 		  'e_mail':req.param('e_mail'),
 		  'account_no':req.param('account_no'),
 		  'bank_no':req.param('bank_no'),
-		  'price':req.param('price')};
-
+		  'event_id':req.param('event_id'),
+		  'event_nickname':req.param('event_id')
+		 };
 
     var file = req.files;
-
-    console.log(req);
 
     backend.createTicket(createObjectCallback(resp),file.eticket,ticket);
 });
 
+
+var loadOfferResponse = Prelude.curry(function(resp,offer,err,res){
+    var info = {'info':{}};
+    info.info.event = res.response;
+    info.info.ticket = offer.ticket;
+
+    console.log(info.info.event);
+
+    var date = Date.now();
+    var expDate = new Date(offer.expires);
+
+    var exp = (expDate - date)/1000;
+    var expires = {};
+    expires.hours = Math.floor(exp/3600);
+    expires.minutes = Math.floor((exp - (expires.hours*3600))/60);
+    expires.seconds = Math.floor(exp - expires.hours*3600 - expires.minutes*60);
+
+    info.info.ticket.expires = expires;
+
+    info.info.user = offer.user;
+
+    resp.render('offer',info);
+    
+});
+
+var loadOfferCallback = Prelude.curry(function(resp,err,res){
+
+    if(!err){
+
+	var offer = res.result;
+
+	backend.getEvent(loadOfferResponse(resp,offer),offer.ticket.event_id);
+	
+    }else{
+
+	
+    }
+});
+
+exports.loadOffer = Prelude.curry(function(req,resp){
+
+    var offer_id = req.params.fbid + ':' + req.params.ticket_id;
+
+    backend.getOffer(loadOfferCallback(resp),offer_id);
+});
