@@ -43,7 +43,7 @@ exports.createEvent = Prelude.curry(function(req,resp){
 exports.subscribeEvent = Prelude.curry(function(req,resp){
 
    var event_id = req.params.event_id;
-   var fbid = req.param('fbid');
+   var fbid = req.params.fbid;
    backend.subscribe(createObjectCallback(resp),{'event_id': event_id, 'fbid': fbid});
 });
 
@@ -74,7 +74,8 @@ exports.createTicket = Prelude.curry(function(req,resp){
 		  'account_no':req.param('account_no'),
 		  'bank_no':req.param('bank_no'),
 		  'event_id':req.param('event_id'),
-		  'event_nickname':req.param('event_id')
+		  'event_nickname':req.param('event_id'),
+		  'price':req.param('price')
 		 };
 
     var file = req.files;
@@ -85,7 +86,8 @@ exports.createTicket = Prelude.curry(function(req,resp){
 
 var loadOfferResponse = Prelude.curry(function(resp,offer,err,res){
     var info = {'info':{}};
-    info.info.event = res.response;
+    info.info.event = res.result;
+    console.log(info);
     info.info.ticket = offer.ticket;
 
     console.log(info.info.event);

@@ -95,7 +95,7 @@ const SERVER = "http://localhost:3000";
 			if(ticketfever.user) {
 				$("#sell_modal input#name").val(ticketfever.user.name.split(" ")[0]);
 				$("#sell_modal input#last-name").val(ticketfever.user.name.split(" ")[1]);
-				$("#sell_modal input#e-mail").val(ticketfever.email);
+				$("#sell_modal input#e-mail").val(ticketfever.user.email);
 				$("#sell_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to sell a ticket.");
@@ -105,7 +105,7 @@ const SERVER = "http://localhost:3000";
 			if(ticketfever.user && !ticketfever._invalid_offer) {
 				$("#offer_modal input#name").val(ticketfever.user.name.split(" ")[0]);
 				$("#offer_modal input#last-name").val(ticketfever.user.name.split(" ")[1]);
-				$("#offer_modal input#e-mail").val(ticketfever.email);
+				$("#offer_modal input#e-mail").val(ticketfever.user.email);
 				$("#offer_modal").modal("show");
 			} else {
 				this.message("error", "You have to be logged in to accept an offer.");
@@ -126,14 +126,7 @@ const SERVER = "http://localhost:3000";
 			FB.login(function(rsp) {
               if(rsp.status == "connected") {
               	ticketfever.getFbUser();
-              	$.ajax("/createUser", {
-              		type: "POST",
-              		data: {user: ticketfever.user},
-              		success: function(rsp) {
-              			rsp = JSON.parse(rsp);
-              			ticketfever.user = rsp.result;
-              		}
-              	});
+              	  
               }
             }, {scope:'email'});
 		},
@@ -143,6 +136,14 @@ const SERVER = "http://localhost:3000";
 			  $("#user_name > a").html(rsp.name);
 			  $("#log_in").hide();
 			  $("#user_name").show();
+			  $.ajax("/createUser", {
+              			type: "POST",
+              		        data: {user: ticketfever.user},
+              		        success: function(rsp) {
+              			rsp = JSON.parse(rsp);
+              			ticketfever.user = rsp.result;
+              		}
+              	});
 			  	ticketfever.requestMoreUserInfo();
 			});
 		},
@@ -176,8 +177,8 @@ const SERVER = "http://localhost:3000";
 			if(ticketfever.user) {
 				var txt = $(".buyer-option a").html();
 				txt = txt == "Waiting for Offer" ? "Subscribe for Tickets" : "Waiting for Offer";
-				$.ajax("/subscribeEvent/" + event_id, {
-					type: "POST",
+				$.ajax("/subscribeEvent/" + event_id + '/' + window.ticketFever.user.id, {
+					type: "GET",
 					data: window.ticketFever.user.id,
 					success: function (result) {
 						result = JSON.parse(result);
@@ -192,7 +193,7 @@ const SERVER = "http://localhost:3000";
 			var m = $(".event-offer .minutes").html();
 			var s = $(".event-offer .seconds").html();
 
-			if (h.length != 0 && m.length != 0 && s.length != 0) {
+			if (h && m && s && h.length != 0 && m.length != 0 && s.length != 0) {
 				h = parseInt(h, 10);
 				m = parseInt(m, 10);
 				s = parseInt(s, 10);

@@ -211,6 +211,35 @@ exports.subscribe = Prelude.curry(function(callback,subscription){
     createObj(exports.tables.subscriptions,seqCallback(addToQueue(exports.tables.subscriptions,exports.ids.events),objResultCallback(callback)),subscription.subscription_id,subscription);
 });
 
+var sendNotification = Prelude.curry(function(offer,err,res){
+
+    var user = JSON.parse(res);
+    
+    console.log(offer);
+
+    var offerurl = "http://localhost:3000/offer/"+user.id+"/"+offer.ticket.ticket_id;
+
+    var mailOptions = {
+	from: "TicketFever <ticketfever@gmail.com>", // sender address
+	to: user.email, // list of receivers
+	subject: "Ticket offer", // Subject line
+	text: "There is a ticket for you. To view this offer go to: " + offerurl, // plaintext body
+	html: "<b>There is a ticket available for you. To view this offer go to <a href=\""+offerurl+"\">"+offerurl+"</a></b>" // html body
+    }
+
+    // send mail with defined transport object
+    exports.smtpTransport.sendMail(mailOptions, function(error, response){
+	if(error){
+	    console.log(error);
+	}else{
+	    console.log("Message sent: " + response.message);
+	}
+	// if you don't want to use this transport object anymore, uncomment following line
+	//smtpTransport.close(); // shut down the connection pool, no more messages
+    });
+
+});
+
 var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 
     if(!err){
@@ -243,27 +272,13 @@ var offerMaker = Prelude.curry(function(eventId,tickets,err,res){
 		DB.zremrangebyscore(exports.queues.subscriptions+':'+eventId,rmSubs[i],rmSubs[i]);
 	    }
 
+	    
+
 	    for(var i=0;i<addOffers.length;i++){
-		DB.hset(exports.tables.offers,addOffers[i].user.id+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+		DB.hset(exports.tables.offers,addOffers[i].user.fbid+':'+addOffers[i].ticket.ticket_id,JSON.stringify(addOffers[i]));
+		console.log(addOffers[i]);
 
-		var mailOptions = {
-		    from: "TicketFever <ticketfever@gmail.com>", // sender address
-		    to: addOffers[i].user.email, // list of receivers
-		    subject: "Ticket for you", // Subject line
-		    text: "There is a ticket for you. ", // plaintext body
-		    html: "<b>There is a ticket available for you. </b>" // html body
-		}
-
-		// send mail with defined transport object
-		exports.smtpTransport.sendMail(mailOptions, function(error, response){
-		    if(error){
-			console.log(error);
-		    }else{
-			console.log("Message sent: " + response.message);
-		    }
-		    // if you don't want to use this transport object anymore, uncomment following line
-		    //smtpTransport.close(); // shut down the connection pool, no more messages
-		});
+		DB.hget(exports.tables.users,addOffers[i].user.fbid,sendNotification(addOffers[i]));		
 	    }
 	}
     }
